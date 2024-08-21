@@ -1,0 +1,147 @@
+syntax = "proto3";
+
+package author;
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option go_package = "github.com/purnasatria/library-management/api/author/";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  security_definitions: {
+    security: {
+      key: "Bearer"
+      value: {
+        type: TYPE_API_KEY
+        in: IN_HEADER
+        name: "Authorization"
+      }
+    }
+  }
+  security: {
+    security_requirement: {
+      key: "Bearer"
+      value: {}
+    }
+  }
+};
+
+service AuthorService {
+  rpc CreateAuthor(CreateAuthorRequest) returns (AuthorResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/authors"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      security: {
+        security_requirement: {
+          key: "Bearer"
+          value: {}
+        }
+      }
+    };
+  }
+  rpc GetAuthor(GetAuthorRequest) returns (AuthorResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/authors/{id}"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      security: {
+        security_requirement: {
+          key: "Bearer"
+          value: {}
+        }
+      }
+    };
+
+  }
+  rpc UpdateAuthor(UpdateAuthorRequest) returns (AuthorResponse) {
+    option (google.api.http) = {
+      put: "/api/v1/authors/{id}"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      security: {
+        security_requirement: {
+          key: "Bearer"
+          value: {}
+        }
+      }
+    };
+  }
+  rpc DeleteAuthor(DeleteAuthorRequest) returns (DeleteAuthorResponse) {
+    option (google.api.http) = {
+      delete: "/api/v1/authors/{id}"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      security: {
+        security_requirement: {
+          key: "Bearer"
+          value: {}
+        }
+      }
+    };
+  }
+  rpc ListAuthors(ListAuthorsRequest) returns (ListAuthorsResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/authors"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      security: {
+        security_requirement: {
+          key: "Bearer"
+          value: {}
+        }
+      }
+    };
+  }
+}
+
+message Author {
+  string id = 1;
+  string name = 2;
+  string biography = 3;
+  google.protobuf.Timestamp birth_date = 4;
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp updated_at = 6;
+}
+
+message CreateAuthorRequest {
+  string name = 1;
+  string biography = 2;
+  google.protobuf.Timestamp birth_date = 3;
+}
+
+message GetAuthorRequest {
+  string id = 1;
+}
+
+message UpdateAuthorRequest {
+  string id = 1;
+  string name = 2;
+  string biography = 3;
+  google.protobuf.Timestamp birth_date = 4;
+}
+
+message DeleteAuthorRequest {
+  string id = 1;
+}
+
+message DeleteAuthorResponse {
+  bool success = 1;
+}
+
+message ListAuthorsRequest {
+  int32 page = 1;
+  int32 page_size = 2;
+}
+
+message ListAuthorsResponse {
+  repeated Author authors = 1;
+  int32 total = 2;
+}
+
+message AuthorResponse {
+  Author author = 1;
+}

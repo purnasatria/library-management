@@ -3,13 +3,13 @@ package database
 import (
 	"database/sql"
 	"fmt"
-	"os"
 	"time"
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	_ "github.com/lib/pq"
+	"github.com/rs/zerolog/log"
 )
 
 type Config struct {
@@ -27,6 +27,7 @@ func NewConnection(cfg *Config) (*sql.DB, error) {
 	if err = db.Ping(); err != nil {
 		return nil, err
 	}
+	log.Info().Msg("Database connection established")
 
 	db.SetMaxOpenConns(cfg.MaxOpenConns)
 	db.SetMaxIdleConns(cfg.MaxIdleConns)
@@ -41,13 +42,9 @@ func RunMigrations(db *sql.DB, migrationPath string) error {
 		return fmt.Errorf("failed to create database driver: %w", err)
 	}
 
-	dir, _ := os.Getwd()
-	fmt.Println("Current working directory:", dir)
-
 	m, err := migrate.NewWithDatabaseInstance(
 		fmt.Sprintf("file://%s", migrationPath),
 		"postgres", driver)
-	fmt.Println(err)
 	if err != nil {
 		return fmt.Errorf("failed to create migration instance: %w", err)
 	}
