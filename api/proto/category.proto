@@ -1,0 +1,215 @@
+syntax = "proto3";
+
+package category;
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option go_package = "github.com/purnasatria/library-management/api/category/";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  security_definitions: {
+    security: {
+      key: "Bearer"
+      value: {
+        type: TYPE_API_KEY
+        in: IN_HEADER
+        name: "Authorization"
+      }
+    }
+  }
+  security: {
+    security_requirement: {
+      key: "Bearer"
+      value: {}
+    }
+  }
+};
+
+service CategoryService {
+  rpc CreateCategory(CreateCategoryRequest) returns (CategoryResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/categories"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      security: {
+        security_requirement: {
+          key: "Bearer"
+          value: {}
+        }
+      }
+    };
+  }
+  rpc GetCategory(GetCategoryRequest) returns (CategoryResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/categories/{id}"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      security: {
+        security_requirement: {
+          key: "Bearer"
+          value: {}
+        }
+      }
+    };
+  }
+  rpc UpdateCategory(UpdateCategoryRequest) returns (CategoryResponse) {
+    option (google.api.http) = {
+      put: "/api/v1/categories/{id}"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      security: {
+        security_requirement: {
+          key: "Bearer"
+          value: {}
+        }
+      }
+    };
+  }
+  rpc DeleteCategory(DeleteCategoryRequest) returns (DeleteCategoryResponse) {
+    option (google.api.http) = {
+      delete: "/api/v1/categories/{id}"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      security: {
+        security_requirement: {
+          key: "Bearer"
+          value: {}
+        }
+      }
+    };
+  }
+  rpc ListCategories(ListCategoriesRequest) returns (ListCategoriesResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/categories"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      security: {
+        security_requirement: {
+          key: "Bearer"
+          value: {}
+        }
+      }
+    };
+  }
+  rpc UpdateItemCategories(UpdateItemCategoriesRequest) returns (UpdateItemCategoriesResponse) {
+    option (google.api.http) = {
+      put: "/api/v1/items/{item_id}/categories"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      security: {
+        security_requirement: {
+          key: "Bearer"
+          value: {}
+        }
+      }
+    };
+  }
+  rpc BulkAddItemToCategories(BulkAddItemToCategoriesRequest) returns (BulkAddItemToCategoriesResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/categories/bulk-add-item"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      security: {
+        security_requirement: {
+          key: "Bearer"
+          value: {}
+        }
+      }
+    };
+  }
+  rpc GetItemCategories(GetItemCategoriesRequest) returns (GetItemCategoriesResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/items/{item_id}/categories"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      security: {
+        security_requirement: {
+          key: "Bearer"
+          value: {}
+        }
+      }
+    };
+  }
+}
+
+message Category {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  google.protobuf.Timestamp created_at = 4;
+  google.protobuf.Timestamp updated_at = 5;
+}
+
+message CreateCategoryRequest {
+  string name = 1;
+  string description = 2;
+}
+
+message GetCategoryRequest {
+  string id = 1;
+}
+
+message UpdateCategoryRequest {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+}
+
+message DeleteCategoryRequest {
+  string id = 1;
+}
+
+message DeleteCategoryResponse {
+  bool success = 1;
+}
+
+message ListCategoriesRequest {
+  int32 page = 1;
+  int32 page_size = 2;
+}
+
+message ListCategoriesResponse {
+  repeated Category categories = 1;
+  int32 total = 2;
+}
+
+message CategoryResponse {
+  Category category = 1;
+}
+
+message UpdateItemCategoriesRequest {
+  string item_id = 1;
+  string item_type = 2;
+  repeated string category_ids = 3;
+}
+
+message UpdateItemCategoriesResponse {
+  bool success = 1;
+  repeated string added_category_ids = 2;
+  repeated string removed_category_ids = 3;
+}
+
+message BulkAddItemToCategoriesRequest {
+  string item_id = 1;
+  string item_type = 2;
+  repeated string category_ids = 3;
+}
+
+message BulkAddItemToCategoriesResponse {
+  bool success = 1;
+}
+
+message GetItemCategoriesRequest {
+  string item_id = 1;
+  string item_type = 2;
+}
+
+message GetItemCategoriesResponse {
+  repeated Category categories = 1;
+}

@@ -12,8 +12,8 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/joho/godotenv"
 	pb_auth "github.com/purnasatria/library-management/api/gen/auth"
-	pb_author "github.com/purnasatria/library-management/api/gen/author"
-	"github.com/purnasatria/library-management/internal/author"
+	pb_category "github.com/purnasatria/library-management/api/gen/category"
+	"github.com/purnasatria/library-management/internal/category"
 	"github.com/purnasatria/library-management/pkg/database"
 	"github.com/purnasatria/library-management/pkg/env"
 	grpcprotocol "github.com/purnasatria/library-management/pkg/protocol/grpc"
@@ -38,27 +38,27 @@ type ServerConfig struct {
 }
 
 func main() {
-	//  INFO: Set up the logger
-	zerolog.SetGlobalLevel(zerolog.DebugLevel)
+	// INFO: Set up logging
+	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 
-	// INFO: setup flag
+	// INFO: setup flags
 	flag.Parse()
 
 	// INFO: setup env
 	if err := godotenv.Load(); err != nil {
-		log.Warn().Err(err).Msg("can't load config file, load defaults")
+		log.Warn().Err(err).Msg("Error loading .env file")
 	}
 
 	// INFO: setup db
-	dbcfg := database.Config{
-		URL:             env.Get("DATABASE_URL", "postgres://postgres:postgres@localhost:5432/library_author?sslmode=disable"),
+	dbConfig := database.Config{
+		URL:             env.Get("DATABASE_URL", "postgres://postgres:postgres@localhost:5432/library_category?sslmode=disable"),
 		MaxOpenConns:    env.GetInt("DB_MAX_OPEN_CONNS", 25),
 		MaxIdleConns:    env.GetInt("DB_MAX_IDLE_CONNS", 25),
 		ConnMaxLifetime: env.GetDuration("DB_CONN_MAX_LIFETIME", 5*time.Minute),
 	}
 
-	db, err := database.NewConnection(&dbcfg)
+	db, err := database.NewConnection(&dbConfig)
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to connect to database")
 	}
@@ -66,7 +66,7 @@ func main() {
 
 	// INFO: Migration
 	if *migrate {
-		if err := database.RunMigrations(db, "migrations/author"); err != nil {
+		if err := database.RunMigrations(db, "migrations/category"); err != nil {
 			log.Fatal().Err(err).Msg("Failed to run migrations")
 		}
 		log.Info().Msg("Migrations completed successfully")
@@ -75,8 +75,8 @@ func main() {
 
 	// INFO: setup service
 	servercfg := &ServerConfig{
-		GRPCPort:           env.Get("GRPC_PORT", ":50052"),
-		RESTPort:           env.Get("REST_PORT", ":8082"),
+		GRPCPort:           env.Get("GRPC_PORT", ":50053"),
+		RESTPort:           env.Get("REST_PORT", ":8083"),
 		AuthServiceAddress: env.Get("AUTH_SERVICE_ADDRESS", "localhost:50051"),
 	}
 
@@ -98,9 +98,9 @@ func main() {
 	// INFO: Create the auth service client
 	authClient := pb_auth.NewAuthServiceClient(authConn)
 
-	// INFO: Setup author service
-	authorRepo := author.NewRepository(db)
-	authorService := author.NewService(authorRepo)
+	// Create category repository and service
+	repo := category.NewRepository(db)
+	service := category.NewService(repo)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -109,7 +109,7 @@ func main() {
 		go server.RunGRPCServer(server.GRPCServerConfig{
 			Port: servercfg.GRPCPort,
 			RegisterService: func(s *grpc.Server) {
-				pb_author.RegisterAuthorServiceServer(s, authorService)
+				pb_category.RegisterCategoryServiceServer(s, service)
 			},
 			UnaryInterceptors: []grpc.UnaryServerInterceptor{
 				grpcprotocol.LogInterceptor,
@@ -139,19 +139,21 @@ func main() {
 				opts = append(opts,
 					grpc.WithUnaryInterceptor(grpcprotocol.ClientServerKeyInterceptor(serverKey)),
 				)
-				if err := pb_author.RegisterAuthorServiceHandlerFromEndpoint(ctx, mux, endpoint, opts); err != nil {
+				if err := pb_category.RegisterCategoryServiceHandlerFromEndpoint(ctx, mux, endpoint, opts); err != nil {
 					return err
 				}
 				return nil
 			},
 			SwaggerUIDir:    "./node_modules/swagger-ui-dist",
-			SwaggerJSONPath: "./api/swagger/author.swagger.json",
+			SwaggerJSONPath: "./api/swagger/category.swagger.json",
 		})
 	}
 
-	// INFO: simple graceful shutdown
+	// INFO: simple gracefull shutdown
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
-	log.Warn().Msg("Shutting down server...")
+	log.Info().Msg("Shutting down server...")
+
+	log.Info().Msg("Server exited")
 }
