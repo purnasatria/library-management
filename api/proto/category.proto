@@ -6,7 +6,7 @@ import "google/api/annotations.proto";
 import "google/protobuf/timestamp.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
 
-option go_package = "github.com/purnasatria/library-management/api/category/";
+option go_package = "github.com/purnasatria/library-management/api/gen/category";
 
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
   security_definitions: {
@@ -136,6 +136,19 @@ service CategoryService {
       }
     };
   }
+  rpc GetItemsByCategories(GetItemsByCategoriesRequest) returns (GetItemsByCategoriesResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/categories/items"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      security: {
+        security_requirement: {
+          key: "Bearer"
+          value: {}
+        }
+      }
+    };
+  }
 }
 
 message Category {
@@ -212,4 +225,13 @@ message GetItemCategoriesRequest {
 
 message GetItemCategoriesResponse {
   repeated Category categories = 1;
+}
+
+message GetItemsByCategoriesRequest {
+  repeated string category_ids = 1;
+  string item_type = 2;
+}
+
+message GetItemsByCategoriesResponse {
+  repeated string item_ids = 1;
 }

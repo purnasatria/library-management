@@ -27,6 +27,7 @@ const (
 	CategoryService_UpdateItemCategories_FullMethodName    = "/category.CategoryService/UpdateItemCategories"
 	CategoryService_BulkAddItemToCategories_FullMethodName = "/category.CategoryService/BulkAddItemToCategories"
 	CategoryService_GetItemCategories_FullMethodName       = "/category.CategoryService/GetItemCategories"
+	CategoryService_GetItemsByCategories_FullMethodName    = "/category.CategoryService/GetItemsByCategories"
 )
 
 // CategoryServiceClient is the client API for CategoryService service.
@@ -41,6 +42,7 @@ type CategoryServiceClient interface {
 	UpdateItemCategories(ctx context.Context, in *UpdateItemCategoriesRequest, opts ...grpc.CallOption) (*UpdateItemCategoriesResponse, error)
 	BulkAddItemToCategories(ctx context.Context, in *BulkAddItemToCategoriesRequest, opts ...grpc.CallOption) (*BulkAddItemToCategoriesResponse, error)
 	GetItemCategories(ctx context.Context, in *GetItemCategoriesRequest, opts ...grpc.CallOption) (*GetItemCategoriesResponse, error)
+	GetItemsByCategories(ctx context.Context, in *GetItemsByCategoriesRequest, opts ...grpc.CallOption) (*GetItemsByCategoriesResponse, error)
 }
 
 type categoryServiceClient struct {
@@ -131,6 +133,16 @@ func (c *categoryServiceClient) GetItemCategories(ctx context.Context, in *GetIt
 	return out, nil
 }
 
+func (c *categoryServiceClient) GetItemsByCategories(ctx context.Context, in *GetItemsByCategoriesRequest, opts ...grpc.CallOption) (*GetItemsByCategoriesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetItemsByCategoriesResponse)
+	err := c.cc.Invoke(ctx, CategoryService_GetItemsByCategories_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CategoryServiceServer is the server API for CategoryService service.
 // All implementations must embed UnimplementedCategoryServiceServer
 // for forward compatibility.
@@ -143,6 +155,7 @@ type CategoryServiceServer interface {
 	UpdateItemCategories(context.Context, *UpdateItemCategoriesRequest) (*UpdateItemCategoriesResponse, error)
 	BulkAddItemToCategories(context.Context, *BulkAddItemToCategoriesRequest) (*BulkAddItemToCategoriesResponse, error)
 	GetItemCategories(context.Context, *GetItemCategoriesRequest) (*GetItemCategoriesResponse, error)
+	GetItemsByCategories(context.Context, *GetItemsByCategoriesRequest) (*GetItemsByCategoriesResponse, error)
 	mustEmbedUnimplementedCategoryServiceServer()
 }
 
@@ -176,6 +189,9 @@ func (UnimplementedCategoryServiceServer) BulkAddItemToCategories(context.Contex
 }
 func (UnimplementedCategoryServiceServer) GetItemCategories(context.Context, *GetItemCategoriesRequest) (*GetItemCategoriesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetItemCategories not implemented")
+}
+func (UnimplementedCategoryServiceServer) GetItemsByCategories(context.Context, *GetItemsByCategoriesRequest) (*GetItemsByCategoriesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetItemsByCategories not implemented")
 }
 func (UnimplementedCategoryServiceServer) mustEmbedUnimplementedCategoryServiceServer() {}
 func (UnimplementedCategoryServiceServer) testEmbeddedByValue()                         {}
@@ -342,6 +358,24 @@ func _CategoryService_GetItemCategories_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CategoryService_GetItemsByCategories_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetItemsByCategoriesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CategoryServiceServer).GetItemsByCategories(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CategoryService_GetItemsByCategories_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CategoryServiceServer).GetItemsByCategories(ctx, req.(*GetItemsByCategoriesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CategoryService_ServiceDesc is the grpc.ServiceDesc for CategoryService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -380,6 +414,10 @@ var CategoryService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetItemCategories",
 			Handler:    _CategoryService_GetItemCategories_Handler,
+		},
+		{
+			MethodName: "GetItemsByCategories",
+			Handler:    _CategoryService_GetItemsByCategories_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

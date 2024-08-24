@@ -1,12 +1,12 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "category.proto",
+    "title": "book.proto",
     "version": "version not set"
   },
   "tags": [
     {
-      "name": "CategoryService"
+      "name": "BookService"
     }
   ],
   "consumes": [
@@ -16,14 +16,14 @@
     "application/json"
   ],
   "paths": {
-    "/api/v1/categories": {
+    "/api/v1/books": {
       "get": {
-        "operationId": "CategoryService_ListCategories",
+        "operationId": "BookService_ListBooks",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/categoryListCategoriesResponse"
+              "$ref": "#/definitions/bookListBooksResponse"
             }
           },
           "default": {
@@ -47,108 +47,19 @@
             "required": false,
             "type": "integer",
             "format": "int32"
-          }
-        ],
-        "tags": [
-          "CategoryService"
-        ],
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      },
-      "post": {
-        "operationId": "CategoryService_CreateCategory",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/categoryCategoryResponse"
-            }
           },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
           {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/categoryCreateCategoryRequest"
-            }
-          }
-        ],
-        "tags": [
-          "CategoryService"
-        ],
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
-    "/api/v1/categories/bulk-add-item": {
-      "post": {
-        "operationId": "CategoryService_BulkAddItemToCategories",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/categoryBulkAddItemToCategoriesResponse"
-            }
+            "name": "titleQuery",
+            "in": "query",
+            "required": false,
+            "type": "string"
           },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
           {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/categoryBulkAddItemToCategoriesRequest"
-            }
-          }
-        ],
-        "tags": [
-          "CategoryService"
-        ],
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      }
-    },
-    "/api/v1/categories/items": {
-      "get": {
-        "operationId": "CategoryService_GetItemsByCategories",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/categoryGetItemsByCategoriesResponse"
-            }
+            "name": "authorQuery",
+            "in": "query",
+            "required": false,
+            "type": "string"
           },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
           {
             "name": "categoryIds",
             "in": "query",
@@ -160,14 +71,94 @@
             "collectionFormat": "multi"
           },
           {
-            "name": "itemType",
+            "name": "isbnQuery",
             "in": "query",
             "required": false,
             "type": "string"
+          },
+          {
+            "name": "publicationYearStart",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "publicationYearEnd",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "publisherQuery",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "availableOnly",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "CREATED_AT",
+              "TITLE",
+              "AUTHOR",
+              "PUBLICATION_YEAR"
+            ],
+            "default": "CREATED_AT"
+          },
+          {
+            "name": "sortDesc",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
           }
         ],
         "tags": [
-          "CategoryService"
+          "BookService"
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      },
+      "post": {
+        "operationId": "BookService_CreateBook",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/bookBookResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/bookCreateBookRequest"
+            }
+          }
+        ],
+        "tags": [
+          "BookService"
         ],
         "security": [
           {
@@ -176,14 +167,14 @@
         ]
       }
     },
-    "/api/v1/categories/{id}": {
+    "/api/v1/books/{id}": {
       "get": {
-        "operationId": "CategoryService_GetCategory",
+        "operationId": "BookService_GetBook",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/categoryCategoryResponse"
+              "$ref": "#/definitions/bookBookResponse"
             }
           },
           "default": {
@@ -202,7 +193,7 @@
           }
         ],
         "tags": [
-          "CategoryService"
+          "BookService"
         ],
         "security": [
           {
@@ -211,12 +202,12 @@
         ]
       },
       "delete": {
-        "operationId": "CategoryService_DeleteCategory",
+        "operationId": "BookService_DeleteBook",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/categoryDeleteCategoryResponse"
+              "$ref": "#/definitions/bookDeleteBookResponse"
             }
           },
           "default": {
@@ -235,7 +226,7 @@
           }
         ],
         "tags": [
-          "CategoryService"
+          "BookService"
         ],
         "security": [
           {
@@ -244,12 +235,12 @@
         ]
       },
       "put": {
-        "operationId": "CategoryService_UpdateCategory",
+        "operationId": "BookService_UpdateBook",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/categoryCategoryResponse"
+              "$ref": "#/definitions/bookBookResponse"
             }
           },
           "default": {
@@ -271,12 +262,12 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/CategoryServiceUpdateCategoryBody"
+              "$ref": "#/definitions/BookServiceUpdateBookBody"
             }
           }
         ],
         "tags": [
-          "CategoryService"
+          "BookService"
         ],
         "security": [
           {
@@ -285,14 +276,14 @@
         ]
       }
     },
-    "/api/v1/items/{itemId}/categories": {
-      "get": {
-        "operationId": "CategoryService_GetItemCategories",
+    "/api/v1/books/{id}/borrow": {
+      "post": {
+        "operationId": "BookService_BorrowBook",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/categoryGetItemCategoriesResponse"
+              "$ref": "#/definitions/bookBorrowBookResponse"
             }
           },
           "default": {
@@ -304,46 +295,7 @@
         },
         "parameters": [
           {
-            "name": "itemId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "itemType",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "CategoryService"
-        ],
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      },
-      "put": {
-        "operationId": "CategoryService_UpdateItemCategories",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/categoryUpdateItemCategoriesResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "itemId",
+            "name": "id",
             "in": "path",
             "required": true,
             "type": "string"
@@ -353,12 +305,97 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/CategoryServiceUpdateItemCategoriesBody"
+              "$ref": "#/definitions/BookServiceBorrowBookBody"
             }
           }
         ],
         "tags": [
-          "CategoryService"
+          "BookService"
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/books/{id}/recommendations": {
+      "get": {
+        "operationId": "BookService_GetBookRecommendations",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/bookGetBookRecommendationsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "BookService"
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/books/{id}/return": {
+      "post": {
+        "operationId": "BookService_ReturnBook",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/bookReturnBookResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/BookServiceReturnBookBody"
+            }
+          }
+        ],
+        "tags": [
+          "BookService"
         ],
         "security": [
           {
@@ -369,22 +406,50 @@
     }
   },
   "definitions": {
-    "CategoryServiceUpdateCategoryBody": {
+    "BookServiceBorrowBookBody": {
       "type": "object",
       "properties": {
-        "name": {
+        "userId": {
+          "type": "string"
+        }
+      }
+    },
+    "BookServiceReturnBookBody": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string"
+        },
+        "transactionId": {
+          "type": "string"
+        }
+      }
+    },
+    "BookServiceUpdateBookBody": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "authorId": {
+          "type": "string"
+        },
+        "isbn": {
+          "type": "string"
+        },
+        "publicationYear": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "publisher": {
           "type": "string"
         },
         "description": {
           "type": "string"
-        }
-      }
-    },
-    "CategoryServiceUpdateItemCategoriesBody": {
-      "type": "object",
-      "properties": {
-        "itemType": {
-          "type": "string"
+        },
+        "totalCopies": {
+          "type": "integer",
+          "format": "int32"
         },
         "categoryIds": {
           "type": "array",
@@ -394,32 +459,17 @@
         }
       }
     },
-    "categoryBulkAddItemToCategoriesRequest": {
-      "type": "object",
-      "properties": {
-        "itemId": {
-          "type": "string"
-        },
-        "itemType": {
-          "type": "string"
-        },
-        "categoryIds": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
+    "ListBooksRequestSortBy": {
+      "type": "string",
+      "enum": [
+        "CREATED_AT",
+        "TITLE",
+        "AUTHOR",
+        "PUBLICATION_YEAR"
+      ],
+      "default": "CREATED_AT"
     },
-    "categoryBulkAddItemToCategoriesResponse": {
-      "type": "object",
-      "properties": {
-        "success": {
-          "type": "boolean"
-        }
-      }
-    },
-    "categoryCategory": {
+    "authorAuthor": {
       "type": "object",
       "properties": {
         "id": {
@@ -428,8 +478,12 @@
         "name": {
           "type": "string"
         },
-        "description": {
+        "biography": {
           "type": "string"
+        },
+        "birthDate": {
+          "type": "string",
+          "format": "date-time"
         },
         "createdAt": {
           "type": "string",
@@ -441,49 +495,171 @@
         }
       }
     },
-    "categoryCategoryResponse": {
+    "bookAuthorSummary": {
       "type": "object",
       "properties": {
-        "category": {
-          "$ref": "#/definitions/categoryCategory"
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
         }
       }
     },
-    "categoryCreateCategoryRequest": {
+    "bookBook": {
       "type": "object",
       "properties": {
-        "name": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "author": {
+          "$ref": "#/definitions/authorAuthor"
+        },
+        "isbn": {
+          "type": "string"
+        },
+        "publicationYear": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "publisher": {
           "type": "string"
         },
         "description": {
           "type": "string"
-        }
-      }
-    },
-    "categoryDeleteCategoryResponse": {
-      "type": "object",
-      "properties": {
-        "success": {
-          "type": "boolean"
-        }
-      }
-    },
-    "categoryGetItemCategoriesResponse": {
-      "type": "object",
-      "properties": {
+        },
+        "totalCopies": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "availableCopies": {
+          "type": "integer",
+          "format": "int32"
+        },
         "categories": {
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/categoryCategory"
+            "$ref": "#/definitions/bookCategorySummary"
           }
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
         }
       }
     },
-    "categoryGetItemsByCategoriesResponse": {
+    "bookBookResponse": {
       "type": "object",
       "properties": {
-        "itemIds": {
+        "book": {
+          "$ref": "#/definitions/bookBook"
+        }
+      }
+    },
+    "bookBookSummary": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "author": {
+          "$ref": "#/definitions/bookAuthorSummary"
+        },
+        "isbn": {
+          "type": "string"
+        },
+        "publicationYear": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "publisher": {
+          "type": "string"
+        },
+        "totalCopies": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "availableCopies": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "categories": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/bookCategorySummary"
+          }
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "bookBorrowBookResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "transactionId": {
+          "type": "string"
+        }
+      }
+    },
+    "bookCategorySummary": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "bookCreateBookRequest": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "authorId": {
+          "type": "string"
+        },
+        "isbn": {
+          "type": "string"
+        },
+        "publicationYear": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "publisher": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "totalCopies": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "categoryIds": {
           "type": "array",
           "items": {
             "type": "string"
@@ -491,14 +667,34 @@
         }
       }
     },
-    "categoryListCategoriesResponse": {
+    "bookDeleteBookResponse": {
       "type": "object",
       "properties": {
-        "categories": {
+        "success": {
+          "type": "boolean"
+        }
+      }
+    },
+    "bookGetBookRecommendationsResponse": {
+      "type": "object",
+      "properties": {
+        "recommendations": {
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/categoryCategory"
+            "$ref": "#/definitions/bookBookSummary"
+          }
+        }
+      }
+    },
+    "bookListBooksResponse": {
+      "type": "object",
+      "properties": {
+        "books": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/bookBookSummary"
           }
         },
         "total": {
@@ -507,23 +703,11 @@
         }
       }
     },
-    "categoryUpdateItemCategoriesResponse": {
+    "bookReturnBookResponse": {
       "type": "object",
       "properties": {
         "success": {
           "type": "boolean"
-        },
-        "addedCategoryIds": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "removedCategoryIds": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
         }
       }
     },

@@ -146,6 +146,21 @@ func (s *Service) GetItemCategories(ctx context.Context, req *pb.GetItemCategori
 	}, nil
 }
 
+func (s *Service) GetItemsByCategories(ctx context.Context, req *pb.GetItemsByCategoriesRequest) (*pb.GetItemsByCategoriesResponse, error) {
+	if req.ItemType == "" {
+		return nil, status.Errorf(codes.InvalidArgument, "item_type is required")
+	}
+
+	itemIDs, err := s.repo.GetItemsByCategories(req.CategoryIds, req.ItemType)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to get items by categories: %v", err)
+	}
+
+	return &pb.GetItemsByCategoriesResponse{
+		ItemIds: itemIDs,
+	}, nil
+}
+
 func (s *Service) categoryToProto(category *Category) (*pb.CategoryResponse, error) {
 	return &pb.CategoryResponse{
 		Category: &pb.Category{

@@ -224,6 +224,36 @@ func (r *Repository) GetItemCategories(itemID, itemType string) ([]*Category, er
 	return categories, nil
 }
 
+func (r *Repository) GetItemsByCategories(categoryIDs []string, itemType string) ([]string, error) {
+	query := `
+		SELECT DISTINCT item_id
+		FROM category_items
+		WHERE category_id = ANY($1)
+		AND item_type = $2
+	`
+
+	rows, err := r.db.Query(query, pq.Array(categoryIDs), itemType)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var itemIDs []string
+	for rows.Next() {
+		var itemID string
+		if err := rows.Scan(&itemID); err != nil {
+			return nil, err
+		}
+		itemIDs = append(itemIDs, itemID)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return itemIDs, nil
+}
+
 func difference(a, b []string) []string {
 	mb := make(map[string]struct{}, len(b))
 	for _, x := range b {
