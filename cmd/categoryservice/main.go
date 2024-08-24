@@ -52,7 +52,7 @@ func main() {
 
 	// INFO: setup db
 	dbConfig := database.Config{
-		URL:             env.Get("DATABASE_URL", "postgres://postgres:postgres@localhost:5432/library_category?sslmode=disable"),
+		URL:             env.Get("CATEGORY_DATABASE_URL", "postgres://postgres:postgres@localhost:5432/library_category?sslmode=disable"),
 		MaxOpenConns:    env.GetInt("DB_MAX_OPEN_CONNS", 25),
 		MaxIdleConns:    env.GetInt("DB_MAX_IDLE_CONNS", 25),
 		ConnMaxLifetime: env.GetDuration("DB_CONN_MAX_LIFETIME", 5*time.Minute),
@@ -75,8 +75,8 @@ func main() {
 
 	// INFO: setup service
 	servercfg := &ServerConfig{
-		GRPCPort:           env.Get("GRPC_PORT", ":50053"),
-		RESTPort:           env.Get("REST_PORT", ":8083"),
+		GRPCPort:           env.Get("CATEGORY_GRPC_PORT", ":50053"),
+		RESTPort:           env.Get("CATEGORY_REST_PORT", ":8083"),
 		AuthServiceAddress: env.Get("AUTH_SERVICE_ADDRESS", "localhost:50051"),
 	}
 

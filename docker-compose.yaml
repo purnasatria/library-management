@@ -1,0 +1,104 @@
+version: "3.8"
+
+services:
+  auth:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_PATH: cmd/auth
+    ports:
+      - "8081:8081"
+    environment:
+      - DATABASE_URL=postgres://postgres:postgres@postgres:5432/library_auth?sslmode=disable
+      - AUTH_GRPC_PORT=:50051
+      - AUTH_REST_PORT=:8081
+      - JWT_ACCESS_SECRET=your_access_secret
+      - JWT_REFRESH_SECRET=your_refresh_secret
+      - SERVER_KEY=your_server_key
+    depends_on:
+      - postgres
+    networks:
+      - library_network
+
+  author:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_PATH: cmd/author
+    ports:
+      - "8082:8082"
+    environment:
+      - DATABASE_URL=postgres://postgres:postgres@postgres:5432/library_author?sslmode=disable
+      - AUTHOR_GRPC_PORT=:50052
+      - AUTHOR_REST_PORT=:8082
+      - AUTH_SERVICE_ADDRESS=auth:50051
+      - SERVER_KEY=your_server_key
+    depends_on:
+      - postgres
+      - auth
+    networks:
+      - library_network
+
+  category:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_PATH: cmd/category
+    ports:
+      - "8083:8083"
+    environment:
+      - DATABASE_URL=postgres://postgres:postgres@postgres:5432/library_category?sslmode=disable
+      - CATEGORY_GRPC_PORT=:50053
+      - CATEGORY_REST_PORT=:8083
+      - AUTH_SERVICE_ADDRESS=auth:50051
+      - SERVER_KEY=your_server_key
+    depends_on:
+      - postgres
+      - auth
+    networks:
+      - library_network
+
+  book:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_PATH: cmd/book
+    ports:
+      - "8084:8084"
+    environment:
+      - DATABASE_URL=postgres://postgres:postgres@postgres:5432/library_book?sslmode=disable
+      - BOOK_GRPC_PORT=:50054
+      - BOOK_REST_PORT=:8084
+      - AUTH_SERVICE_ADDRESS=auth:50051
+      - AUTHOR_SERVICE_ADDRESS=author:50052
+      - CATEGORY_SERVICE_ADDRESS=category:50053
+      - SERVER_KEY=your_server_key
+    depends_on:
+      - postgres
+      - auth
+      - author
+      - category
+    networks:
+      - library_network
+
+  postgres:
+    image: postgres:15
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./scripts/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+    networks:
+      - library_network
+
+volumes:
+  postgres-data:
+
+networks:
+  library_network:
+    driver: bridge
