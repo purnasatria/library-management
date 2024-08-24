@@ -253,6 +253,7 @@ func (r *Repository) BorrowBook(ctx context.Context, tx *sql.Tx, bookID, userID 
 		SET available_copies = available_copies - 1
 		WHERE id = $1 AND available_copies > 0
 		RETURNING available_copies
+    FOR UPDATE SKIP LOCKED
 	`
 
 	var availableCopies int
@@ -288,6 +289,7 @@ func (r *Repository) ReturnBook(ctx context.Context, tx *sql.Tx, bookID, userID,
 		SET available_copies = available_copies + 1
 		WHERE id = $1
 		RETURNING available_copies
+    FOR UPDATE SKIP LOCKED
 	`
 
 	var availableCopies int
