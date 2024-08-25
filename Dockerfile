@@ -1,5 +1,5 @@
 # Start from the official Go image
-FROM golang:1.21-alpine AS builder
+FROM golang:1.23-alpine AS builder
 
 # Build argument
 ARG SERVICE_PATH
@@ -28,6 +28,7 @@ WORKDIR /root/
 
 # Copy the pre-built binary file from the previous stage
 COPY --from=builder /app/main .
+COPY --from=builder /app/api/swagger ./api/swagger
 COPY --from=builder /app/migrations ./migrations
 
 # Command to run the executable

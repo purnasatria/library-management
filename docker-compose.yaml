@@ -10,7 +10,7 @@ services:
     ports:
       - "8081:8081"
     environment:
-      - DATABASE_URL=postgres://postgres:postgres@postgres:5432/library_auth?sslmode=disable
+      - AUTH_DATABASE_URL=postgres://postgres:postgres@postgres:5432/library_auth?sslmode=disable
       - AUTH_GRPC_PORT=:50051
       - AUTH_REST_PORT=:8081
       - JWT_ACCESS_SECRET=your_access_secret
@@ -30,7 +30,7 @@ services:
     ports:
       - "8082:8082"
     environment:
-      - DATABASE_URL=postgres://postgres:postgres@postgres:5432/library_author?sslmode=disable
+      - AUTHOR_DATABASE_URL=postgres://postgres:postgres@postgres:5432/library_author?sslmode=disable
       - AUTHOR_GRPC_PORT=:50052
       - AUTHOR_REST_PORT=:8082
       - AUTH_SERVICE_ADDRESS=auth:50051
@@ -50,7 +50,7 @@ services:
     ports:
       - "8083:8083"
     environment:
-      - DATABASE_URL=postgres://postgres:postgres@postgres:5432/library_category?sslmode=disable
+      - CATEGORY_DATABASE_URL=postgres://postgres:postgres@postgres:5432/library_category?sslmode=disable
       - CATEGORY_GRPC_PORT=:50053
       - CATEGORY_REST_PORT=:8083
       - AUTH_SERVICE_ADDRESS=auth:50051
@@ -70,7 +70,7 @@ services:
     ports:
       - "8084:8084"
     environment:
-      - DATABASE_URL=postgres://postgres:postgres@postgres:5432/library_book?sslmode=disable
+      - BOOK_DATABASE_URL=postgres://postgres:postgres@postgres:5432/library_book?sslmode=disable
       - BOOK_GRPC_PORT=:50054
       - BOOK_REST_PORT=:8084
       - AUTH_SERVICE_ADDRESS=auth:50051
