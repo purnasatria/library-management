@@ -12,7 +12,7 @@ BUILD_NUMBER ?= 0
 
 # Service paths
 SERVICES = auth author category book
-SERVICE_PATHS = $(addprefix cmd/,$(SERVICES))
+SERVICE_PATHS = $(addprefix cmd/,$(SERVICES)service)
 
 # Function to get service-specific version
 define get_service_version
@@ -102,18 +102,24 @@ docker-login:
 	@docker login -u $(DOCKER_USERNAME)
 
 # Run commands (for local development without Docker)
-.PHONY: run-auth run-author run-category run-book
-run-auth:
-	$(GO) run ./cmd/auth
+.PHONY: run $(addprefix run-,$(SERVICES))
 
-run-author:
-	$(GO) run ./cmd/author
+# Generic target for running each service
+define make-run-target
+run-$(1):
+	$(eval SERVICE_PATH := cmd/$(1)service)
+	@echo "Running $(1) service..."
+	$$(GO) run ./${SERVICE_PATH}
+endef
 
-run-category:
-	$(GO) run ./cmd/category
+# Generate run targets for each service
+$(foreach service,$(SERVICES),$(eval $(call make-run-target,$(service))))
 
-run-book:
-	$(GO) run ./cmd/book
+# Generic run target that shows available services
+run:
+	@echo "Available services to run:"
+	@echo "$(SERVICES)" | tr ' ' '\n' | sed 's/^/  run-/'
+	@echo "\nUsage: make run-<service>"
 
 # Test commands
 .PHONY: test test-coverage
